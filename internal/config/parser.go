@@ -80,12 +80,12 @@ func LoadConfig(in io.Reader) (*wgtypes.Config, error) {
 				if cfg != nil {
 					return nil, parseError{message: "duplicated Interface section", line: lineNum}
 				}
-				cfg = &wgtypes.Config{}
+				cfg = &wgtypes.Config{ReplacePeers: true}
 			} else if sec == sectionPeer {
 				if currentPeerConfig != nil {
 					peers = append(peers, *currentPeerConfig)
 				}
-				currentPeerConfig = &wgtypes.PeerConfig{}
+				currentPeerConfig = &wgtypes.PeerConfig{ReplaceAllowedIPs: true}
 			} else {
 				return nil, parseError{message: fmt.Sprintf("Unknown section: %s", sec), line: lineNum}
 			}
