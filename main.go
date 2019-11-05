@@ -10,15 +10,23 @@ import (
 
 	"github.com/alecthomas/kingpin"
 
-	"github.com/QuantumGhost/wg-quick-go/internal/config"
 	"golang.zx2c4.com/wireguard/wgctrl"
 	"golang.zx2c4.com/wireguard/wgctrl/wgtypes"
+
+	"github.com/QuantumGhost/wg-quick-go/consts"
+	"github.com/QuantumGhost/wg-quick-go/internal/config"
 )
 
 func main() {
 	rootCmd := newCommandLine()
 	getCmd, getOpt := newGetCommand(rootCmd)
 	setCmd, setOpt := newSetCommand(rootCmd)
+	rootCmd.VersionFlag = rootCmd.Flag("version", "Show application version.").PreAction(func(*kingpin.ParseContext) error {
+		consts.PrintVersion()
+		return nil
+	})
+	rootCmd.VersionFlag.Bool()
+
 	switch kingpin.MustParse(rootCmd.Parse(os.Args[1:])) {
 	case getCmd.FullCommand():
 		getConfig(*getOpt)
@@ -29,7 +37,7 @@ func main() {
 }
 
 func newCommandLine() *kingpin.Application {
-	return kingpin.New("wg-quick-go", "wireguard configuring tool")
+	return kingpin.New(consts.ProgramName(), "wireguard configuring tool")
 }
 
 type getOption struct {
@@ -142,5 +150,6 @@ peer: {{ .PublicKey }}
 		allowdIpStrings = append(allowdIpStrings, v.String())
 	}
 	c.AllowedIPs = strings.Join(allowdIpStrings, ", ")
-	t.Execute(os.Stdout, c)
+	err := t.Execute(os.Stdout, c)
+	checkError(err)
 }
