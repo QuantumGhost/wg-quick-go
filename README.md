@@ -10,7 +10,7 @@ See [examples](./examples) for configuration samples.
 ## How to install
 
 ```
-go get -u github.com/QuantumGhost/wg-quick-go
+go install github.com/QuantumGhost/wg-quick-go@latest
 ```
 
 ## How does this work?
